@@ -3,12 +3,49 @@ import { CartBadge } from "./cart-badge";
 
 export function SiteHeader() {
   return (
-    <header className="site-header">
-      <Link className="wordmark" href="/" aria-label="SOLE — início">SOLE<span>CAMISARIA</span></Link>
-      <nav aria-label="Navegação principal">
-        <Link href="/produtos">A coleção</Link>
-        <Link className="bag-link" href="/carrinho">Sacola <CartBadge /></Link>
-      </nav>
+    <header className="site-header-container">
+      <div className="site-topbar">
+        <div className="site-topbar-inner">
+          <span className="site-topbar-item">
+            <span className="status-dot-pulse" aria-hidden="true" />
+            Alta Camisaria · Coleção Autoral em Preparação
+          </span>
+          <span className="site-topbar-item desktop-only">
+            Algodão Nobre & Linho Italiano · Corte sob Medida
+          </span>
+          <span className="site-topbar-item desktop-only">
+            Atelier São Paulo
+          </span>
+        </div>
+      </div>
+      <div className="site-header">
+        <nav className="header-nav-left" aria-label="Navegação da marca">
+          <Link href="/produtos" className="nav-link">
+            A Coleção
+          </Link>
+        </nav>
+
+        <Link className="wordmark" href="/" aria-label="SOLE — Início">
+          <span className="wordmark-title">SOLE</span>
+          <span className="wordmark-subtitle">ALTA CAMISARIA</span>
+        </Link>
+
+        <nav className="header-nav-right" aria-label="Navegação secundária">
+          <Link className="bag-link" href="/carrinho" aria-label="Sacola de compras">
+            <span className="bag-icon-frame" aria-hidden="true">
+              <svg width="14" height="16" viewBox="0 0 14 16" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 5h10l1 10H1L2 5z" />
+                <path d="M4.5 5V3.5a2.5 2.5 0 0 1 5 0V5" />
+              </svg>
+            </span>
+            <span className="bag-text">Sacola</span>
+            <span className="bag-counter-wrap">
+              <CartBadge />
+            </span>
+          </Link>
+        </nav>
+      </div>
     </header>
   );
 }
+

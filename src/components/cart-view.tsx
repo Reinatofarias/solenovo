@@ -80,13 +80,21 @@ export function CartView() {
 
   return (
     <section className="cart-page-section">
+      <nav className="cart-breadcrumb" aria-label="Navegação estrutural">
+        <Link href="/">Início</Link>
+        <span className="breadcrumb-separator">/</span>
+        <Link href="/produtos">A Coleção</Link>
+        <span className="breadcrumb-separator">/</span>
+        <span aria-current="page">Sacola de Compras</span>
+      </nav>
+
       <div className="cart-header">
-        <p className="eyebrow"><span className="status-dot" /> SUA SACOLA</p>
+        <p className="eyebrow"><span className="status-dot-pulse" aria-hidden="true" /> ATELIER SOLE · SUAS ESCOLHAS</p>
         <h1>Sacola de compras</h1>
         <p className="body-copy">
           {serverCart?.totalItems === 1
-            ? "1 camisa selecionada"
-            : `${serverCart?.totalItems ?? localItems.length} camisas selecionadas`}
+            ? "1 camisa autoral selecionada para o seu closet"
+            : `${serverCart?.totalItems ?? localItems.length} camisas autorais selecionadas`}
         </p>
       </div>
 
@@ -100,7 +108,7 @@ export function CartView() {
                     src={line.image.src}
                     alt={line.image.alt}
                     fill
-                    sizes="100px"
+                    sizes="120px"
                   />
                 ) : (
                   <div className="admin-product-placeholder">S</div>
@@ -109,22 +117,27 @@ export function CartView() {
 
               <div className="cart-item-info">
                 <div className="cart-item-headline">
-                  <Link href={`/produtos/${line.productSlug}`} className="cart-item-title">
-                    <h2>{line.productName}</h2>
-                  </Link>
+                  <div className="cart-item-headings">
+                    <span className="cart-item-kicker">ALTA CAMISARIA</span>
+                    <Link href={`/produtos/${line.productSlug}`} className="cart-item-title">
+                      <h2>{line.productName}</h2>
+                    </Link>
+                  </div>
                   <button
                     type="button"
                     onClick={() => removeFromCart(line.variantId)}
                     className="cart-remove-button"
                     aria-label={`Remover ${line.productName} tamanho ${line.size} da sacola`}
                   >
-                    Remover
+                    <span className="remove-icon" aria-hidden="true">✕</span>
+                    <span>Remover</span>
                   </button>
                 </div>
 
-                <p className="cart-item-variant">
-                  Tamanho: <strong>{line.size}</strong> · Cor: <strong>{line.color}</strong>
-                </p>
+                <div className="cart-item-tags">
+                  <span className="cart-tag">Tamanho: <strong>{line.size}</strong></span>
+                  <span className="cart-tag">Cor: <strong>{line.color}</strong></span>
+                </div>
 
                 {!line.available && (
                   <p className="cart-item-warning">
@@ -142,7 +155,7 @@ export function CartView() {
                     >
                       −
                     </button>
-                    <span>{line.quantity}</span>
+                    <span className="quantity-value">{line.quantity}</span>
                     <button
                       type="button"
                       onClick={() => updateCartQuantity(line.variantId, line.quantity + 1)}
@@ -154,10 +167,10 @@ export function CartView() {
                   </div>
 
                   <div className="cart-item-price">
-                    <span>{formatPrice(line.totalPriceInCents)}</span>
+                    <span className="price-total">{formatPrice(line.totalPriceInCents)}</span>
                     {line.quantity > 1 && (
                       <span className="cart-unit-price">
-                        ({formatPrice(line.unitPriceInCents)} cada)
+                        {formatPrice(line.unitPriceInCents)} cada
                       </span>
                     )}
                   </div>
@@ -169,11 +182,20 @@ export function CartView() {
 
         {/* Resumo da Sacola */}
         <aside className="cart-summary-card">
+          <div className="cart-summary-badge">
+            <span>RESUMO DA SELEÇÃO</span>
+          </div>
+
           <h2>Resumo do pedido</h2>
 
           <div className="summary-row">
             <span>Subtotal ({serverCart?.totalItems} {serverCart?.totalItems === 1 ? "peça" : "peças"})</span>
             <strong>{formatPrice(serverCart?.subtotalInCents ?? 0)}</strong>
+          </div>
+
+          <div className="summary-row">
+            <span>Embalagem de Alfaiataria</span>
+            <span className="summary-highlight">Cortesia</span>
           </div>
 
           <div className="summary-row">
@@ -184,13 +206,14 @@ export function CartView() {
           <div className="summary-divider" />
 
           <div className="summary-row summary-total">
-            <span>Total</span>
+            <span>Total estimado</span>
             <strong>{formatPrice(serverCart?.subtotalInCents ?? 0)}</strong>
           </div>
 
           <div className="cart-notice-box">
+            <div className="notice-icon" aria-hidden="true">✦</div>
             <p>
-              <strong>Pré-abertura:</strong> As vendas estão pausadas temporariamente. O checkout apresenta as informações de lançamento.
+              <strong>Fase de Pré-lançamento:</strong> As vendas oficiais serão iniciadas em breve. Conclua a prévia para conhecer a experiência.
             </p>
           </div>
 
@@ -199,13 +222,28 @@ export function CartView() {
             className={`button cart-checkout-button ${serverCart?.hasUnavailableItems ? "disabled" : ""}`}
             aria-disabled={serverCart?.hasUnavailableItems}
           >
-            Avançar para checkout
-            <span aria-hidden="true">→</span>
+            <span>Avançar para checkout</span>
+            <span className="button-arrow" aria-hidden="true">→</span>
           </Link>
 
           <Link href="/produtos" className="text-link cart-back-link">
-            ← Continuar descobrindo a coleção
+            <span>← Continuar explorando a coleção</span>
           </Link>
+
+          <div className="cart-atelier-perks">
+            <div className="perk-item">
+              <span className="perk-dot">✓</span>
+              <span>Embalagem protetora rígida inclusa</span>
+            </div>
+            <div className="perk-item">
+              <span className="perk-dot">✓</span>
+              <span>Ajuste fino de alfaiataria sob consulta</span>
+            </div>
+            <div className="perk-item">
+              <span className="perk-dot">✓</span>
+              <span>Transação protegida e atendimento consultivo</span>
+            </div>
+          </div>
         </aside>
       </div>
     </section>

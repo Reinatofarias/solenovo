@@ -11,11 +11,22 @@ type EmptyStateProps = {
 export function EmptyState({ eyebrow, title, description, href, action }: EmptyStateProps) {
   return (
     <section className="empty-state">
-      <span className="empty-mark" aria-hidden="true">S.</span>
-      <p className="eyebrow">{eyebrow}</p>
+      <div className="empty-seal" aria-hidden="true">
+        <div className="seal-ring outer-ring" />
+        <div className="seal-ring inner-ring" />
+        <span className="empty-mark">S</span>
+        <span className="seal-dot">.</span>
+      </div>
+      <p className="eyebrow"><span className="status-dot-pulse" aria-hidden="true" /> {eyebrow}</p>
       <h1>{title}</h1>
       <p className="body-copy">{description}</p>
-      <Link className="button" href={href}>{action}<span aria-hidden="true">↗</span></Link>
+      <div className="empty-action-wrapper">
+        <Link className="button" href={href}>
+          <span>{action}</span>
+          <span className="button-arrow" aria-hidden="true">↗</span>
+        </Link>
+      </div>
     </section>
   );
 }
+
