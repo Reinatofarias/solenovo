@@ -9,3 +9,5 @@ coverage/
 *.tsbuildinfo
 verification/
 *.log
+public/uploads/products/*
+!public/uploads/products/.gitkeep

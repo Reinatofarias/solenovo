@@ -2,7 +2,7 @@
 
 Versão 0.1 · 29/09/2026 · Status: planejamento, execução não iniciada.
 
-Atualização de execução, 29/09/2026: responsável confirmou camisaria física e solicitou preparar estrutura sem catálogo real e sem vendas. Foi especificado um recorte implementável em [PRD](01-product/PRD.md) e [SPEC de fundação](02-specs/foundation.spec.md), com documentação técnica própria. T07 foi concluída para esse recorte, com lint/tipos, 16 testes e build aprovados. Partes locais de T09/T10 estão prontas; CI remota, alertas externos, T08 (banco), integração financeira e deploy permanecem pendentes. O marco M0 do MVP completo não foi declarado concluído; o recorte atual não implementa suas funcionalidades comerciais. [Evidências de execução](13-quality/foundation-verification.md).
+Atualização de execução, 29/09/2026: responsável confirmou camisaria física e solicitou preparar estrutura sem catálogo real e sem vendas. Foi especificado um recorte implementável em [PRD](01-product/PRD.md) e [SPEC de fundação](02-specs/foundation.spec.md), com documentação técnica própria. T07 (fundação) e T11 (PDP e carrinho mínimos) foram concluídas, com lint/tipos, 33 testes e build de produção aprovados. Partes locais de T09/T10 estão prontas; CI remota, alertas externos, T08 (banco), T12 (checkout/pedidos), integração financeira e deploy permanecem pendentes. [Evidências de execução](13-quality/foundation-verification.md).
 
 **CONFIRMED:** o deploy da aplicação será na Vercel, conforme instrução do responsável pelo projeto. Next.js, PostgreSQL, ORM e fornecedores complementares continuam candidatos até os ADRs correspondentes. Este roadmap antecipa o planejamento solicitado; não declara concluídas as fases documentais nem autoriza saltar seus critérios de entrada.
 
@@ -91,7 +91,7 @@ Feature: transação vertical mínima. Story: como comprador, quero escolher um 
 
 | Task / objetivo | Arquivos provavelmente afetados | Dependências | Critério de conclusão |
 | --- | --- | --- | --- |
-| T11 Entregar produto e carrinho mínimos | `src/app/produto/[slug]/*`, `src/app/carrinho/*`, `src/application/catalog/*`, `src/application/cart/*`, testes correspondentes | T08/T10; SPECs produto/carrinho | Variante e quantidade válidas; preço vem do servidor; estado vazio/erro/loading coberto |
+| T11 Entregar produto e carrinho mínimos (Concluída) | `src/app/produtos/[slug]/*`, `src/app/carrinho/*`, `src/application/catalog/*`, `src/application/cart/*`, testes | T08/T10; SPECs produto/carrinho | Concluída: PDP com galeria e variantes, links na coleção, sacola interativa com validação server-side e 33 testes |
 | T12 Criar checkout e pedido idempotente | `src/app/checkout/*`, `src/app/api/orders/*`, `src/domain/orders/*`, `src/application/checkout/*`, migrations e testes | T11; preço/logística definidos | Snapshot e total corretos; duplo clique/múltiplas abas não duplicam pedido; sessão autoriza consulta |
 | T13 Integrar um método de teste ponta a ponta | `src/infrastructure/payments/*`, `src/application/payments/*`, `src/app/api/payments/*`, UI de pagamento e testes | T12; documentação oficial e credenciais de teste | Tentativa persistida, chave estável e tokenização conforme modalidade; dados de cartão não passam pelo backend SOLE |
 | T14 Receber e processar webhook com confirmação | `src/app/api/webhooks/mercado-pago/*`, `src/application/payment-events/*`, `src/infrastructure/jobs/*`, migrations, `src/app/pedido/[id]/*` | T13; ADR-012 | Autenticidade, persistência, consulta ao provedor e transição transacional; M1 demonstrado |

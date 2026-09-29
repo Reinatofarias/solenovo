@@ -28,14 +28,21 @@ npm start
 - Catálogo no servidor com validação de produtos/variantes e projeção pública.
 - API de catálogo e liveness; APIs de pedido/pagamento recusam operações com 503.
 - Noindex de pré-abertura e cabeçalhos básicos de segurança.
+- Área `/admin` com login, dashboard e gestão local de produtos, múltiplas fotos, variantes, preço e estoque.
 
-Rotas: `/`, `/produtos`, `/carrinho`, `/checkout`, `/api/products`, `/api/health`. Não há PDP, admin, carrinho persistente ou checkout funcional nesta entrega.
+Rotas: `/`, `/produtos`, `/carrinho`, `/checkout`, `/admin`, `/api/products`, `/api/health`. Não há PDP, carrinho persistente ou checkout funcional nesta entrega.
+
+### Administração local
+
+Copie `.env.example` para `.env.local` e configure e-mail, hash scrypt e segredo de sessão. O usuário-base deste workspace já está configurado somente no arquivo ignorado `.env.local`; a senha em texto não é versionada.
+
+O painel grava no JSON e em `public/uploads/products` durante desenvolvimento. Na Vercel, todas as mutações são bloqueadas até conectar Supabase Database e Storage, pois o filesystem de funções não oferece persistência operacional.
 
 ## Catálogo
 
 [products.json](src/infrastructure/catalog/products.json) começa com `[]`. O [schema](src/domain/catalog/product.ts) valida produtos e variantes. Fixtures existem somente nos testes. Rascunhos não são retornados pela API. Produto publicado exige imagem local autorizada e variantes válidas. A inclusão de um produto **não habilita vendas**.
 
-O arquivo é somente leitura e versionado, não um sistema de estoque. Banco, migrations e reservas transacionais serão necessários antes de compras reais. Não há interface administrativa de cadastro ainda.
+O arquivo é transitório e versionado, não um sistema de estoque transacional. Banco, migrations e reservas serão necessários antes de compras reais. A interface administrativa local será migrada para Supabase.
 
 ## Arquitetura e Vercel
 

@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
-import { EmptyState } from "@/components/empty-state";
+import { CartView } from "@/components/cart-view";
 
-export const metadata: Metadata = { title: "Sacola" };
+export const metadata: Metadata = {
+  title: "Sacola de compras",
+  description: "Revise suas camisas selecionadas na sacola de compras da SOLE.",
+};
 
 export default function CartPage() {
-  return <EmptyState eyebrow="SUA SACOLA" title="Ainda não há peças por aqui." description="Nossa coleção está em preparação. Quando as compras estiverem disponíveis, você poderá escolher suas camisas aqui." href="/produtos" action="Ver a coleção" />;
+  return <CartView />;
 }
