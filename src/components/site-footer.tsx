@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export function SiteFooter() {
   return (
@@ -6,8 +7,13 @@ export function SiteFooter() {
       <div className="site-footer-inner">
         <div className="footer-brand-column">
           <div className="footer-wordmark">
-            <span className="footer-brand-title">SOLE</span>
-            <span className="footer-brand-sub">ALTA CAMISARIA</span>
+            <Image
+              className="footer-brand-logo"
+              src="/brand/sole-logo.png"
+              alt="SOLE Alta Camisaria"
+              width={220}
+              height={74}
+            />
           </div>
           <p className="footer-description">
             Camisaria autoral de precisão. Tecidos de fiação nobre, caimento milimétrico e o requinte da alfaiataria clássica contemporânea.

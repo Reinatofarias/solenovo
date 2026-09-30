@@ -7,6 +7,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: { default: "SOLE — Camisaria", template: "%s | SOLE" },
   description: "SOLE Camisaria. Nossa coleção está em preparação.",
+  icons: { icon: "/icon.svg", shortcut: "/icon.svg", apple: "/icon.svg" },
   robots: { index: false, follow: false },
 };
 

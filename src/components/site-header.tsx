@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { CartBadge } from "./cart-badge";
 import { readSiteSettings } from "@/infrastructure/site/site-settings-repository";
 import { defaultSiteSettings } from "@/domain/site/site-settings";
@@ -24,8 +25,14 @@ export async function SiteHeader() {
           <Link href="/produtos" className="nav-link">A Coleção</Link>
         </nav>
         <Link className="wordmark" href="/" aria-label="SOLE — Início">
-          <span className="wordmark-title">SOLE</span>
-          <span className="wordmark-subtitle">ALTA CAMISARIA</span>
+          <Image
+            className="brand-logo"
+            src="/brand/sole-logo.png"
+            alt="SOLE Alta Camisaria"
+            width={220}
+            height={74}
+            priority
+          />
         </Link>
         <nav className="header-nav-right" aria-label="Navegação secundária">
           <Link className="bag-link" href="/carrinho" aria-label="Sacola de compras">
