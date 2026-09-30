@@ -10,19 +10,18 @@ import { catalogRepository } from "@/infrastructure/catalog/local-catalog";
 import { parseCatalog } from "@/domain/catalog/product";
 import { adminProductInput, priceToCents } from "@/application/admin/product-input";
 import { removeProductImage, saveProductImages } from "@/infrastructure/catalog/local-images";
+import { siteSettingsSchema } from "@/domain/site/site-settings";
+import { saveSiteSettings } from "@/infrastructure/site/site-settings-repository";
 
 export type ActionState = { error?: string };
 
 const attempts = new Map<string, { count: number; resetAt: number }>();
 
 function requiredConfig() {
-  const email = process.env.ADMIN_EMAIL?.trim().toLowerCase() || "admin@sole.local";
-  const passwordHash =
-    process.env.ADMIN_PASSWORD_HASH ||
-    "scrypt:fb3dfdbe593130c5b7ea1b866a5566b3:7c0ea599e4ddbf749e211ef27a1e19dd0dfe417291075b61e2d0d70049af02ef10f586df291af54024ea413f5c231a3f344d1c9ae34f60c313f93f61f565b596";
-  const secret =
-    process.env.ADMIN_SESSION_SECRET ||
-    "L-9gVvkZ0iVnfEVPE_i-9qnJLDYRtjSUrzE7QMDWWlQtM_QWQc0Xo6Rddb34J5Zb";
+  const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  const passwordHash = process.env.ADMIN_PASSWORD_HASH;
+  const secret = process.env.ADMIN_SESSION_SECRET;
+  if (!email || !passwordHash || !secret) throw new Error("ADMIN_NOT_CONFIGURED");
   return { email, passwordHash, secret };
 }
 
@@ -63,7 +62,6 @@ export async function logoutAction() {
 
 export async function saveProductAction(_state: ActionState, formData: FormData): Promise<ActionState> {
   await requireAdmin();
-  if (process.env.VERCEL === "1") return { error: "A gravação na Vercel será habilitada após conectar Supabase Database e Storage." };
   let savedSources: string[] = [];
   try {
     const variants = JSON.parse(String(formData.get("variants") ?? "[]")) as unknown;
@@ -94,7 +92,9 @@ export async function saveProductAction(_state: ActionState, formData: FormData)
     const previous = products.find((item) => item.id === product.id);
     const next = previous ? products.map((item) => item.id === product.id ? product : item) : [...products, product];
     const validated = parseCatalog(next);
-    await catalogRepository.write(validated);
+    const validatedProduct = validated.find((item) => item.id === product.id);
+    if (!validatedProduct) throw new Error("PRODUCT_VALIDATION_FAILED");
+    await catalogRepository.save(validatedProduct);
     const retained = new Set(images.map((image) => image.src));
     await Promise.allSettled((previous?.images ?? []).filter((image) => !retained.has(image.src)).map((image) => removeProductImage(image.src)));
     revalidatePath("/admin"); revalidatePath("/admin/produtos"); revalidatePath("/produtos");
@@ -102,6 +102,7 @@ export async function saveProductAction(_state: ActionState, formData: FormData)
     await Promise.allSettled(savedSources.map(removeProductImage));
     if (error instanceof SyntaxError) return { error: "Os dados de variantes ou imagens estão inválidos." };
     if (error instanceof Error && error.message.includes("Duplicate")) return { error: "Slug, SKU ou identificador duplicado." };
+    if (error instanceof Error && error.message === "LOCAL_STORAGE_UNAVAILABLE_ON_VERCEL") return { error: "O banco aceita os dados, mas o envio de imagens ainda precisa do Supabase Storage." };
     if (error instanceof Error && error.message.startsWith("Use imagens")) return { error: error.message };
     if (error instanceof Error && error.message.startsWith("Envie no máximo")) return { error: error.message };
     return { error: "Revise os campos obrigatórios e tente novamente." };
@@ -111,11 +112,22 @@ export async function saveProductAction(_state: ActionState, formData: FormData)
 
 export async function archiveProductAction(formData: FormData) {
   await requireAdmin();
-  if (process.env.VERCEL === "1") redirect("/admin/produtos?error=storage");
   const id = String(formData.get("id") ?? "");
-  const products = parseCatalog(await catalogRepository.read());
-  const next = products.map((product) => product.id === id ? { ...product, status: "archived" as const } : product);
-  await catalogRepository.write(parseCatalog(next));
+  await catalogRepository.archive(id);
   revalidatePath("/admin"); revalidatePath("/admin/produtos"); revalidatePath("/produtos");
   redirect("/admin/produtos");
+}
+
+export async function saveSiteSettingsAction(formData: FormData) {
+  await requireAdmin();
+  const settings = siteSettingsSchema.parse({
+    announcementEnabled: formData.get("announcementEnabled") === "on",
+    announcementLeft: formData.get("announcementLeft"),
+    announcementCenter: formData.get("announcementCenter"),
+    announcementRight: formData.get("announcementRight"),
+  });
+  await saveSiteSettings(settings);
+  revalidatePath("/", "layout");
+  revalidatePath("/admin/configuracoes");
+  redirect("/admin/configuracoes?salvo=1");
 }

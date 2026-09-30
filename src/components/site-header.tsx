@@ -1,35 +1,32 @@
 import Link from "next/link";
 import { CartBadge } from "./cart-badge";
+import { readSiteSettings } from "@/infrastructure/site/site-settings-repository";
+import { defaultSiteSettings } from "@/domain/site/site-settings";
 
-export function SiteHeader() {
+export async function SiteHeader() {
+  const settings = await readSiteSettings().catch(() => defaultSiteSettings);
   return (
     <header className="site-header-container">
-      <div className="site-topbar">
-        <div className="site-topbar-inner">
-          <span className="site-topbar-item">
-            <span className="status-dot-pulse" aria-hidden="true" />
-            Alta Camisaria · Coleção Autoral em Preparação
-          </span>
-          <span className="site-topbar-item desktop-only">
-            Algodão Nobre & Linho Italiano · Corte sob Medida
-          </span>
-          <span className="site-topbar-item desktop-only">
-            Atelier São Paulo
-          </span>
+      {settings.announcementEnabled && (
+        <div className="site-topbar">
+          <div className="site-topbar-inner">
+            <span className="site-topbar-item">
+              <span className="status-dot-pulse" aria-hidden="true" />
+              {settings.announcementLeft}
+            </span>
+            <span className="site-topbar-item desktop-only">{settings.announcementCenter}</span>
+            <span className="site-topbar-item desktop-only">{settings.announcementRight}</span>
+          </div>
         </div>
-      </div>
+      )}
       <div className="site-header">
         <nav className="header-nav-left" aria-label="Navegação da marca">
-          <Link href="/produtos" className="nav-link">
-            A Coleção
-          </Link>
+          <Link href="/produtos" className="nav-link">A Coleção</Link>
         </nav>
-
         <Link className="wordmark" href="/" aria-label="SOLE — Início">
           <span className="wordmark-title">SOLE</span>
           <span className="wordmark-subtitle">ALTA CAMISARIA</span>
         </Link>
-
         <nav className="header-nav-right" aria-label="Navegação secundária">
           <Link className="bag-link" href="/carrinho" aria-label="Sacola de compras">
             <span className="bag-icon-frame" aria-hidden="true">
@@ -39,13 +36,10 @@ export function SiteHeader() {
               </svg>
             </span>
             <span className="bag-text">Sacola</span>
-            <span className="bag-counter-wrap">
-              <CartBadge />
-            </span>
+            <span className="bag-counter-wrap"><CartBadge /></span>
           </Link>
         </nav>
       </div>
     </header>
   );
 }
-

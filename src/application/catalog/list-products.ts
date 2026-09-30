@@ -5,7 +5,8 @@ export interface CatalogRepository {
 }
 
 export interface WritableCatalogRepository extends CatalogRepository {
-  write(products: unknown): Promise<void>;
+  save(product: unknown): Promise<void>;
+  archive(id: string): Promise<void>;
 }
 
 export async function listProducts(repository: CatalogRepository) {

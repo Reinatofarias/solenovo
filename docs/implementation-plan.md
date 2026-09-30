@@ -4,7 +4,7 @@ Versão 0.1 · 29/09/2026 · Status: planejamento, execução não iniciada.
 
 Atualização de execução, 29/09/2026: responsável confirmou camisaria física e solicitou preparar estrutura sem catálogo real e sem vendas. Foi especificado um recorte implementável em [PRD](01-product/PRD.md) e [SPEC de fundação](02-specs/foundation.spec.md), com documentação técnica própria. T07 (fundação) e T11 (PDP e carrinho mínimos) foram concluídas, com lint/tipos, 33 testes e build de produção aprovados. Partes locais de T09/T10 estão prontas; CI remota, alertas externos, T08 (banco), T12 (checkout/pedidos), integração financeira e deploy permanecem pendentes. [Evidências de execução](13-quality/foundation-verification.md).
 
-**CONFIRMED:** o deploy da aplicação será na Vercel, conforme instrução do responsável pelo projeto. Next.js, PostgreSQL, ORM e fornecedores complementares continuam candidatos até os ADRs correspondentes. Este roadmap antecipa o planejamento solicitado; não declara concluídas as fases documentais nem autoriza saltar seus critérios de entrada.
+**CONFIRMED:** o deploy da aplicação será na Vercel, conforme instrução do responsável pelo projeto, e Supabase será o provedor PostgreSQL (ADR-002). ORM/cliente de acesso e fornecedores complementares continuam pendentes dos ADRs correspondentes. Este roadmap antecipa o planejamento solicitado; não declara concluídas as fases documentais nem autoriza saltar seus critérios de entrada.
 
 ## 1. Resultado e caminho crítico
 

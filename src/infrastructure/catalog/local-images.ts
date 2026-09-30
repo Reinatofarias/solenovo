@@ -12,7 +12,7 @@ const allowed = new Map([
 const uploadDirectory = path.join(process.cwd(), "public", "uploads", "products");
 
 export async function saveProductImages(files: File[]) {
-  if (process.env.VERCEL === "1") throw new Error("LOCAL_STORAGE_UNAVAILABLE_ON_VERCEL");
+  if (process.env.VERCEL === "1" && files.length > 0) throw new Error("LOCAL_STORAGE_UNAVAILABLE_ON_VERCEL");
   if (files.length > MAX_IMAGES) throw new Error("Envie no máximo 12 imagens por vez.");
   await mkdir(uploadDirectory, { recursive: true });
   const saved: string[] = [];
