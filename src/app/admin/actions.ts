@@ -12,6 +12,7 @@ import { adminProductInput, priceToCents } from "@/application/admin/product-inp
 import { removeProductImage, saveProductImages } from "@/infrastructure/catalog/local-images";
 import { siteSettingsSchema } from "@/domain/site/site-settings";
 import { saveSiteSettings } from "@/infrastructure/site/site-settings-repository";
+import { z } from "zod";
 
 export type ActionState = { error?: string };
 
@@ -105,6 +106,13 @@ export async function saveProductAction(_state: ActionState, formData: FormData)
     if (error instanceof Error && error.message === "SUPABASE_STORAGE_CONFIG_MISSING") return { error: "Configure o Supabase Storage antes de enviar imagens na Vercel." };
     if (error instanceof Error && error.message.startsWith("SUPABASE_STORAGE_UPLOAD_FAILED")) return { error: "Não foi possível enviar as imagens ao Supabase Storage. Verifique se o bucket product-images existe." };
     if (error instanceof Error && error.message === "SUPABASE_CATALOG_SAVE_FAILED") return { error: "A imagem foi enviada, mas o produto não pôde ser gravado no catálogo. Verifique o RPC save_catalog_product no Supabase." };
+    if (error instanceof z.ZodError) {
+      const path = String(error.issues[0]?.path.join(".") ?? "");
+      if (path.includes("variants")) return { error: "Adicione uma variação preenchendo SKU, tamanho, cor, preço e estoque." };
+      if (path.includes("images")) return { error: "Adicione pelo menos uma foto válida para publicar a peça." };
+      if (path.includes("description")) return { error: "Preencha a descrição antes de publicar a peça." };
+      return { error: "Revise os campos obrigatórios destacados e tente novamente." };
+    }
     if (error instanceof Error && error.message.startsWith("Use imagens")) return { error: error.message };
     if (error instanceof Error && error.message.startsWith("Envie no máximo")) return { error: error.message };
     return { error: "Revise os campos obrigatórios e tente novamente." };

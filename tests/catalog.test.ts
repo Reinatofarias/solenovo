@@ -51,6 +51,15 @@ describe("catalog boundary", () => {
   it.each(["https://example.com/image.jpg", "//example.com/image.jpg", "/../secret.jpg"])("rejects unsafe image source %s", (src) => {
     expect(() => parseCatalog([{ ...fixture(), images: [{ src, alt: "Teste" }] }])).toThrow();
   });
+  it("accepts images stored in the public Supabase product bucket", () => {
+    expect(() => parseCatalog([{
+      ...fixture(),
+      images: [{
+        src: "https://project.supabase.co/storage/v1/object/public/product-images/products/test/image.webp",
+        alt: "Imagem WebP",
+      }],
+    }])).not.toThrow();
+  });
   it("sanitizes failures and provides correlation without logging raw data", async () => {
     const report = vi.fn();
     const response = await catalogResponse({ read: async () => { throw new Error("secret database url"); } }, report);
