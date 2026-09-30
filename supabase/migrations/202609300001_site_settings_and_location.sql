@@ -14,7 +14,7 @@ insert into public.site_settings (
   true,
   'Alta Camisaria · Coleção Autoral em Preparação',
   'Algodão Nobre & Linho Italiano · Corte sob Medida',
-  'Atelier São Paulo'
+  'Atelier em Camaragibe, Pernambuco'
 ) on conflict (id) do nothing;
 
 create table if not exists public.visitor_location_events (

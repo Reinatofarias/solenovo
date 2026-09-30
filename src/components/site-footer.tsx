@@ -14,7 +14,7 @@ export function SiteFooter() {
           </p>
           <div className="footer-atelier-badge">
             <span className="status-dot-pulse" aria-hidden="true" />
-            <span>Atelier em São Paulo · Atendimento exclusivo</span>
+            <span>Atelier em Camaragibe, Pernambuco · Atendimento exclusivo</span>
           </div>
         </div>
 
@@ -67,4 +67,3 @@ export function SiteFooter() {
     </footer>
   );
 }
-

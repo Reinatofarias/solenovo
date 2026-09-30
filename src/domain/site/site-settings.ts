@@ -13,5 +13,5 @@ export const defaultSiteSettings: SiteSettings = {
   announcementEnabled: true,
   announcementLeft: "Alta Camisaria · Coleção Autoral em Preparação",
   announcementCenter: "Algodão Nobre & Linho Italiano · Corte sob Medida",
-  announcementRight: "Atelier São Paulo",
+  announcementRight: "Atelier em Camaragibe, Pernambuco",
 };
