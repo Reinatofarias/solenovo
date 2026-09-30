@@ -75,7 +75,7 @@ export async function saveProductAction(_state: ActionState, formData: FormData)
     });
     const files = formData.getAll("images").filter((entry): entry is File => entry instanceof File && entry.size > 0);
     if (parsed.existingImages.length + files.length > 20) return { error: "Cada produto pode ter no máximo 20 imagens." };
-    savedSources = await saveProductImages(files);
+    savedSources = await saveProductImages(files, parsed.id);
     const images = [
       ...parsed.existingImages,
       ...savedSources.map((src, index) => ({ src, alt: `${parsed.name} — imagem ${parsed.existingImages.length + index + 1}` })),
@@ -102,7 +102,8 @@ export async function saveProductAction(_state: ActionState, formData: FormData)
     await Promise.allSettled(savedSources.map(removeProductImage));
     if (error instanceof SyntaxError) return { error: "Os dados de variantes ou imagens estão inválidos." };
     if (error instanceof Error && error.message.includes("Duplicate")) return { error: "Slug, SKU ou identificador duplicado." };
-    if (error instanceof Error && error.message === "LOCAL_STORAGE_UNAVAILABLE_ON_VERCEL") return { error: "O banco aceita os dados, mas o envio de imagens ainda precisa do Supabase Storage." };
+    if (error instanceof Error && error.message === "SUPABASE_STORAGE_CONFIG_MISSING") return { error: "Configure o Supabase Storage antes de enviar imagens na Vercel." };
+    if (error instanceof Error && error.message.startsWith("SUPABASE_STORAGE_UPLOAD_FAILED")) return { error: "Não foi possível enviar as imagens ao Supabase Storage. Verifique se o bucket product-images existe." };
     if (error instanceof Error && error.message.startsWith("Use imagens")) return { error: error.message };
     if (error instanceof Error && error.message.startsWith("Envie no máximo")) return { error: error.message };
     return { error: "Revise os campos obrigatórios e tente novamente." };

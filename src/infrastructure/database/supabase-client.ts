@@ -33,6 +33,12 @@ export function isSupabaseDatabaseConfigured() {
   return Boolean(databaseConfig());
 }
 
+export function getSupabaseProjectUrl() {
+  const config = databaseConfig();
+  if (!config) throw new Error("SUPABASE_DATABASE_CONFIG_INVALID");
+  return config.url;
+}
+
 export function getSupabaseServiceClient() {
   const config = databaseConfig();
   if (!config) throw new Error("SUPABASE_DATABASE_CONFIG_INVALID");
