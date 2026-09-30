@@ -2,6 +2,7 @@ import "server-only";
 import { mkdir, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
+import sharp from "sharp";
 import {
   getSupabaseProjectUrl,
   getSupabaseServiceClient,
@@ -22,18 +23,31 @@ function validateFile(file: File) {
   }
 }
 
+async function convertToWebp(file: File) {
+  validateFile(file);
+  return sharp(Buffer.from(await file.arrayBuffer()), { failOn: "error" })
+    .rotate()
+    .resize({
+      width: 2400,
+      height: 3000,
+      fit: "inside",
+      withoutEnlargement: true,
+    })
+    .webp({ quality: 82, effort: 4 })
+    .toBuffer();
+}
+
 async function saveSupabaseImages(files: File[], productId: string) {
   const client = getSupabaseServiceClient();
   const saved: string[] = [];
   try {
     for (const file of files) {
-      validateFile(file);
-      const extension = allowed.get(file.type);
-      const objectPath = "products/" + productId + "/" + randomUUID() + "." + extension;
+      const converted = await convertToWebp(file);
+      const objectPath = "products/" + productId + "/" + randomUUID() + ".webp";
       const { error } = await client.storage.from(STORAGE_BUCKET).upload(
         objectPath,
-        await file.arrayBuffer(),
-        { contentType: file.type, upsert: false },
+        converted,
+        { contentType: "image/webp", upsert: false },
       );
       if (error) throw new Error("SUPABASE_STORAGE_UPLOAD_FAILED: " + error.message);
       saved.push(getSupabaseProjectUrl() + "/storage/v1/object/public/" + STORAGE_BUCKET + "/" + objectPath);
@@ -50,10 +64,9 @@ async function saveLocalImages(files: File[]) {
   const saved: string[] = [];
   try {
     for (const file of files) {
-      validateFile(file);
-      const extension = allowed.get(file.type);
-      const name = randomUUID() + "." + extension;
-      await writeFile(path.join(uploadDirectory, name), Buffer.from(await file.arrayBuffer()), { flag: "wx" });
+      const converted = await convertToWebp(file);
+      const name = randomUUID() + ".webp";
+      await writeFile(path.join(uploadDirectory, name), converted, { flag: "wx" });
       saved.push("/uploads/products/" + name);
     }
     return saved;

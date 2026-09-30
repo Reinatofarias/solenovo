@@ -2,6 +2,19 @@ import { z } from "zod";
 
 const requiredText = z.string().trim().min(1).max(200);
 const localImagePath = z.string().regex(/^\/(?!\/)[a-zA-Z0-9_/-]+\.(?:avif|webp|png|jpe?g)$/);
+const remoteImagePath = z.string().url().refine((value) => {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" &&
+      url.hostname.endsWith(".supabase.co") &&
+      url.pathname.startsWith("/storage/v1/object/public/product-images/");
+  } catch {
+    return false;
+  }
+}, {
+  message: "Product images must use the public Supabase Storage path.",
+});
+const imagePath = z.union([localImagePath, remoteImagePath]);
 
 export const productSchema = z.object({
   id: requiredText,
@@ -16,7 +29,7 @@ export const productSchema = z.object({
   featured: z.boolean().default(false),
   seoTitle: z.string().trim().max(70).default(""),
   seoDescription: z.string().trim().max(170).default(""),
-  images: z.array(z.object({ src: localImagePath, alt: requiredText })).max(20),
+  images: z.array(z.object({ src: imagePath, alt: requiredText })).max(20),
   variants: z.array(z.object({
     id: requiredText,
     sku: requiredText,
