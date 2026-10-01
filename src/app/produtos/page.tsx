@@ -4,7 +4,10 @@ import Link from "next/link";
 import { listProducts } from "@/application/catalog/list-products";
 import { catalogRepository } from "@/infrastructure/catalog/local-catalog";
 import { EmptyState } from "@/components/empty-state";
-import { formatPrice } from "@/components/product-detail-view";
+
+function formatPrice(priceInCents: number) {
+  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(priceInCents / 100);
+}
 
 export const metadata: Metadata = { title: "A coleção" };
 
